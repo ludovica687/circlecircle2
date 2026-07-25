@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.boundary_prescribed_motion_rigid import BoundaryPrescribedMotionRigid
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.boundary_prescribed_motion_rigid import BoundaryPrescribedMotionRigid
 
 
 class BoundaryPrescribedMotionRigidParser(Parser):

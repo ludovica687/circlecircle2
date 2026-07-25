@@ -9,173 +9,158 @@ import os
 from circlecircle2.utilities.logger import logger
 
 
-class GraphConv(nn.Module):
+class FeaturesToTensorExtractor:
+    """
+    format:
+    list[part_features_dict1, part_features_dict2, ...]
 
-    def __init__(
-        self,
-        input_features,
-        output_features
-    ):
+    usage:
+    dataset data must be saved at cpu !!!
+    self.device = "cpu"
 
+    features_to_tensor_extractor = FeaturesToTensorExtractor()
+    part_node_features = features_to_tensor_extractor.part_node_features(file_path=file_path, num_points=1024)
+    part_node_features_dataset = PartNodeFeaturesDataset(features_list=part_node_features)
+
+    """
+    def __init__(self):
+        self.logger = logger
+        self.device = "cpu"
+
+    # only extract node features from .json, [x, y, z, n1, n2, n3]
+    def part_node_features(self, file_path, num_points):
+        if os.path.isfile(file_path):
+
+            current_part_features = []
+
+            with open(file_path, mode="r", encoding="utf-8", errors="ignore") as f:
+                current_dict = json.load(f)
+
+            # Combine the coordinates and normal of each part, along dim=1, [x, y, z, n1, n2, n3]
+            for part_name, value in current_dict.items():
+                part_coords = value["node_coords"]
+                part_norms = value["node_norms"]
+                part_label = value["label"]
+
+                if len(part_coords) > 0:
+                    part_coords_tensor = torch.tensor(part_coords, dtype=torch.float32, device=self.device)
+                    part_norms_tensor = torch.tensor(part_norms, dtype=torch.float32, device=self.device)
+                    part_labels_tensor = torch.tensor(part_label, dtype=torch.long, device=self.device)
+
+                    part_node_features_tensor = torch.cat((part_coords_tensor, part_norms_tensor), dim=1)
+
+                    part_node_features_tensor = self.sampled_for_node_features(features_tensor=part_node_features_tensor,
+                                                                               num_points=num_points,)
+
+                    current_sample = {
+                        "part_name": part_name,
+                        "features": part_node_features_tensor,
+                        "label": part_labels_tensor
+                    }
+
+                    current_part_features.append(current_sample)
+
+            return current_part_features
+
+        else:
+            self.logger.warning(f"File {file_path} not found\n")
+
+            return None
+
+    def sampled_for_node_features(self, features_tensor, num_points):
+        """
+        :param features_tensor: features_tensor
+        :param num_points: user define number of dim
+        :return:
+        """
+
+        shape_0 = features_tensor.shape[0]
+
+        if shape_0 == 0:
+            raise ValueError("Empty point cloud")
+
+        # If the input data is greater than num_points, a random sampling method is used
+        elif shape_0 > num_points:
+            idx = torch.randperm(n=shape_0, device=features_tensor.device)[: num_points]
+
+            sampled = features_tensor[idx]
+
+        # If the input data is less than num_points, a repeated sampling method is used
+        elif shape_0 < num_points:
+            repeat_num = num_points - shape_0
+
+            idx = torch.randint(low=0,
+                                high=shape_0,
+                                size=(repeat_num,),
+                                device=features_tensor.device)
+
+            extra_features = features_tensor[idx]
+
+            coords = extra_features[:, :3]
+            normals = extra_features[:, 3:]
+
+            noise = torch.randn_like(coords)
+
+            coords = coords + noise * 0.01
+
+            # extra_features = extra_features + noise * 0.01
+            extra_features = torch.cat((coords, normals), dim=1)
+
+            sampled = torch.cat((features_tensor, extra_features), dim=0)
+
+        else:
+            sampled = features_tensor
+
+        return sampled
+
+
+class PartNodeFeaturesDataset(Dataset):
+    """
+    get node coords and node norms from .json
+
+    usage:
+
+    """
+    def __init__(self, features_list):
+        self.logger = logger
+        self.features_list = features_list
+
+    def __len__(self):
+        return len(self.features_list)
+
+    def __getitem__(self, idx):
+        current_feature = self.features_list[idx]
+
+        x = current_feature["features"]
+        y = current_feature["label"]
+
+        return x, y
+
+
+class FeatureEmbedding(nn.Module):
+    """
+    Transform node features into a higher-dimensional space
+    node features [x, y, z, n1, n2, n3]
+    higher-dimensional features [x1, x2, x3, x4, x5, ,x6, ...]
+    """
+    def __init__(self,
+                 input_dim: int,
+                 output_dim: int):
         super().__init__()
 
-        self.linear = nn.Linear(
-            input_features,
-            output_features
-        )
+        mid_dim = int(output_dim / 2)
 
-    def forward(
-        self,
-        x,
-        adj
-    ):
+        self.encoder = nn.Sequential(nn.Linear(input_dim, mid_dim),
+                                     nn.ReLU(),
+                                     nn.Linear(mid_dim, output_dim))
 
-        x = self.linear(x)
-
-        x = torch.matmul(
-            adj,
-            x
-        )
+    def forward(self, x):
+        x = self.encoder(x)
 
         return x
 
 
-    """
-    example:
-    ------------------------------------------------------------------------------------------
-    model = GNN(
-        input_features=6,
-        output_features=6,
-        hidden_layers=[64,128,256],
-        dropout=0.2
-    )
-    -------------------------------------------------------------------------------------------
-    """
-
-
-class GNN(nn.Module):
-
-    def __init__(
-        self,
-        input_features:int,
-        output_features:int,
-        hidden_layers:list[int],
-        activation=nn.ReLU,
-        dropout:float=0.0
-    ):
-
-        super().__init__()
-
-        dims=[
-            input_features
-        ]+hidden_layers
-
-        convs=[]
-
-        for i in range(len(dims)-1):
-
-            convs.append(
-                GraphConv(
-                    dims[i],
-                    dims[i+1]
-                )
-            )
-
-        self.convs = nn.ModuleList(
-            convs
-        )
-
-        self.classifier = MLP(
-            hidden_layers[-1],
-            output_features,
-            [
-                hidden_layers[-1]//2
-            ],
-            dropout=dropout
-        )
-
-    def forward(
-        self,
-        x,
-        adj
-    ):
-
-        # graph feature extraction
-
-        for conv in self.convs:
-
-            x = conv(
-                x,
-                adj
-            )
-
-            x = F.relu(x)
-
-        # global pooling
-        #
-        # node feature
-        #
-        # N × feature
-        #
-        # ↓
-        #
-        # 1 × feature
-
-        graph_feature = torch.mean(
-            x,
-            dim=1,
-            keepdim=False
-        )
-
-        out=self.classifier(
-            graph_feature
-        )
-
-        return out
-
-    @staticmethod
-    def build_knn_adjacency(
-        coords,
-        k=8
-    ):
-        N = coords.shape[0]
-
-        dist = torch.cdist(
-            coords,
-            coords
-        )
-
-        _, idx = torch.topk(
-            dist,
-            k=k+1,
-            largest=False
-        )
-
-        idx = idx[:,1:]
-
-        adj = torch.zeros(
-            N,
-            N,
-            device=coords.device
-        )
-
-        adj.scatter_(
-            1,
-            idx,
-            1
-        )
-
-        degree = adj.sum(
-            dim=1,
-            keepdim=True
-        )
-
-        adj = adj/(degree+1e-8)
-
-        return adj
-
-
-class MLP(nn.Module):
+class PointsShapeMLP(nn.Module):
     """
     example:
     ------------------------------------------------------------------------
@@ -200,6 +185,7 @@ class MLP(nn.Module):
 
     """
     def __init__(self,
+                 embedding,
                  input_features: int,
                  output_features: int,
                  hidden_layers: list[int],
@@ -208,12 +194,13 @@ class MLP(nn.Module):
                  ):
         super().__init__()
 
+        self.embedding = embedding
         self.input_features = input_features
         self.output_features = output_features
         self.hidden_layers = hidden_layers
         self.activation = activation
         self.dropout = dropout
-        self.feature = None
+        self.user_net = None
 
         self.initialize()
 
@@ -241,113 +228,14 @@ class MLP(nn.Module):
                     current_dropout = nn.Dropout(p=self.dropout)
                     collector.append(current_dropout)
 
-        self.feature = nn.Sequential(*collector)
+        self.user_net = nn.Sequential(*collector)
 
     def forward(self, x):
-        return self.feature(x)
+        high_dim_features = self.embedding(x)
 
+        max_pool_features = torch.max(high_dim_features, dim=1)[0]
 
-class Conv(nn.Module):
-    def __init__(self,
-                 conv_type: str,
-                 in_channels: int,
-                 out_channels: int,
-                 hidden_layers: list[int],
-                 kernel_size: int,
-                 padding: int,
-                 activation=nn.ReLU,
-                 dropout: float = 0.0,
-                 ):
-        super().__init__()
-
-        layers = []
-
-        # Dynamically construct convolutional layer blocks
-        for layer in hidden_layers:
-
-            if conv_type == "1d":
-                current_conv = nn.Conv1d(in_channels=in_channels,
-                                         out_channels=out_channels,
-                                         kernel_size=kernel_size,
-                                         padding=padding)
-            else:
-                current_conv = None
-
-            layers.append(current_conv)
-
-
-class DummyMLPClassificationDataset(Dataset):
-    """
-    to test MLP classification task
-    fake data
-
-    if x % 2 == 0, y = true, else y = false
-    """
-
-    def __init__(self):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        self.x = torch.arange(1, 1001, 1, dtype=torch.float32, device=self.device)
-        self.x = self.x.unsqueeze(1)
-
-        self.y = torch.full((1000, ), 0, dtype=torch.long, device=self.device)
-
-        index = torch.where(self.x % 2 != 0)[0]
-
-        self.y[index] = 1
-
-    def __len__(self):
-        return len(self.x)
-
-    def __getitem__(self, idx):
-        return self.x[idx], self.y[idx]
-
-
-class DummyMLPRegressionDataset(Dataset):
-    """
-    to test MLP regression task
-    fake data
-    y = 2 * x + 1
-    """
-
-    def __init__(self):
-
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-        self.x = torch.arange(1, 1000, 1, dtype=torch.float32, device=self.device)
-        self.x = self.x.unsqueeze(1)
-
-        length_x = self.x.shape[0]
-
-        noise = torch.randn(length_x, 1, dtype=torch.float32, device=self.device) * 0.1
-
-        self.y = 2 * self.x + 1 + noise
-
-    def __len__(self):
-        return len(self.x)
-
-    def __getitem__(self, idx):
-        return self.x[idx], self.y[idx]
-
-
-class NodeFeaturesMLPDataset(Dataset):
-    """
-    get node coords and node norms from .json
-
-    usage:
-
-    """
-    def __init__(self, node_features_list):
-        self.logger = logger
-        self.node_features_list = node_features_list
-
-    def __len__(self):
-        return len(self.node_features_list)
-
-    def __getitem__(self, idx):
-        current_data = self.node_features_list[idx]
-
-        return current_data
+        return self.user_net(max_pool_features)
 
 
 class Trainer:
@@ -405,7 +293,7 @@ class Trainer:
             self.logger.debug(f"Epoch: {epoch+1}, Loss: {average_loss}")
 
 
-class TestDataset:
+class DatasetTester:
     """
     to test dataset work successfully
 
@@ -414,169 +302,34 @@ class TestDataset:
     dataset_tester = TestDataset(data_type="mlp")
 
     dataset_tester.test(dataset)
+
+    dataset_tester = DatasetTester()
+    dataset_tester.test(data_type="part_node",
+                        dataset=part_node_features_dataset)
     """
-    def __init__(self, data_type):
-        self.data_type = data_type
+    def __init__(self):
         self.logger = logger
 
-    def test(self, dataset):
-        self.logger.debug(f"Testing dataset: {dataset.name}")
-        self.logger.debug(f"include part name: {dataset.keys}")
+    def test(self, data_type, dataset):
+        self.logger.debug(f"Testing dataset:")
 
-        if self.data_type == "mlp":
+        if data_type == "part_node":
             length = len(dataset)
             self.logger.debug(f"include data batch: {length}\n")
 
             for i in range(length):
-                x, y = dataset[i]
-                self.logger.debug(f"part name: {dataset.keys[i]}")
+                current_data = dataset[i]
+
+                x = current_data[0]
+                y = current_data[1]
+
+                self.logger.debug(f"current_part_label: {y}")
                 self.logger.debug(f"x shape is {x.shape}, y shape is {y.shape}\n")
-
-
-class FeaturesToTensorExtractor:
-    """
-    usage:
-    dataset data must be saved at cpu !!!
-    self.device = "cpu"
-    """
-    def __init__(self):
-        self.logger = logger
-        self.device = "cpu"
-
-    # only extract node features from .json, [x, y, z, n1, n2, n3]
-    def node_features(self, file_path, num_points):
-        if os.path.isfile(file_path):
-
-            current_dataset = []
-
-            with open(file_path, mode="r", encoding="utf-8", errors="ignore") as f:
-                current_dict = json.load(f)
-
-            # Combine the coordinates and normal of each part, along dim=1, [x, y, z, n1, n2, n3]
-            for part_name, value in current_dict.items():
-                part_coords = value["node_coords"]
-                part_norms = value["node_norms"]
-                part_label = value["label"]
-
-                if len(part_coords) > 0:
-                    part_coords_tensor = torch.tensor(part_coords, dtype=torch.float32, device=self.device)
-                    part_norms_tensor = torch.tensor(part_norms, dtype=torch.float32, device=self.device)
-                    part_labels_tensor = torch.tensor(part_label, dtype=torch.long, device=self.device)
-
-                    part_node_features_tensor = torch.cat((part_coords_tensor, part_norms_tensor), dim=1)
-
-                    part_node_features_tensor = self.sampled_for_node_features(features_tensor=part_node_features_tensor,
-                                                                               num_points=num_points,)
-
-                    # part_node_features_tensor_shape_0 = part_node_features_tensor.shape[0]
-
-                    # # If the input data is greater than num_points, a random sampling method is used
-                    # if part_node_features_tensor_shape_0 > num_points:
-                    #     idx = torch.randperm(n=part_node_features_tensor_shape_0, device=self.device)[: num_points]
-                    #
-                    #     part_node_features_tensor = part_node_features_tensor[idx]
-                    #
-                    # # If the input data is less than num_points, a repeated sampling method is used
-                    # else:
-                    #     repeat_num = num_points - part_node_features_tensor_shape_0
-                    #
-                    #     idx = torch.randint(low=0,
-                    #                         high=part_node_features_tensor_shape_0,
-                    #                         size=(repeat_num, ),
-                    #                         device=self.device)
-                    #
-                    #     extra_features = part_node_features_tensor[idx]
-                    #
-                    #     noise = torch.randn_like(extra_features)
-                    #
-                    #     extra_features = extra_features + noise * 0.01
-                    #
-                    #     part_node_features_tensor = torch.cat((part_node_features_tensor, extra_features), dim=0)
-
-                    current_sample = {
-                        "part_name": part_name,
-                        "features": part_node_features_tensor,
-                        "label": part_labels_tensor
-                    }
-
-                    current_dataset.append(current_sample)
-
-            return current_dataset
+        elif data_type == "part_element":
+            pass
 
         else:
-            self.logger.warning(f"File {file_path} not found\n")
-
-            return None
-
-    def sampled_for_node_features(self, features_tensor, num_points):
-        """
-        :param features_tensor: features_tensor
-        :param num_points: user define number of dim
-        :return:
-        """
-
-        shape_0 = features_tensor.shape[0]
-
-        if shape_0 == 0:
-            raise ValueError("Empty point cloud")
-
-        # If the input data is greater than num_points, a random sampling method is used
-        elif shape_0 > num_points:
-            idx = torch.randperm(n=shape_0, device=features_tensor.device)[: num_points]
-
-            sampled = features_tensor[idx]
-
-        # If the input data is less than num_points, a repeated sampling method is used
-        elif shape_0 < num_points:
-            repeat_num = num_points - shape_0
-
-            idx = torch.randint(low=0,
-                                high=shape_0,
-                                size=(repeat_num,),
-                                device=features_tensor.device)
-
-            extra_features = features_tensor[idx]
-
-            coords = extra_features[:, :3]
-            normals = extra_features[:, 3:]
-
-            noise = torch.randn_like(coords)
-
-            coords = coords + noise * 0.01
-
-            # extra_features = extra_features + noise * 0.01
-            extra_features = torch.cat((coords, normals), dim=1)
-
-            sampled = torch.cat((features_tensor, extra_features), dim=0)
-
-        else:
-            sampled = features_tensor
-
-        return sampled
-
-
-class NodeEmbedding(nn.Module):
-    """
-    Transform node features into a higher-dimensional space
-    node features [x, y, z, n1, n2, n3]
-    higher-dimensional features [x1, x2, x3, x4, x5, ,x6, ...]
-    """
-
-    def __init__(self,
-                 input_dim: int,
-                 output_dim: int,):
-        super().__init__()
-
-        mid_dim = int(output_dim / 2)
-
-        self.encoder = nn.Sequential(nn.Linear(input_dim, mid_dim),
-                                     nn.ReLU(),
-                                     nn.Linear(mid_dim, output_dim))
-
-    def forward(self, x):
-        x = self.encoder(x)
-
-        return x
+            pass
 
 
 if __name__ == '__main__':
@@ -615,18 +368,32 @@ if __name__ == '__main__':
     #     print(outputs)
 
     file_path = r"E:\PythonProject\circlecircle2\Test_Items\test_model.json"
-    # dataset = NodeFeaturesMLPDataset(file_path=file_path)
-    #
-    # dataset_tester = TestDataset(data_type="mlp")
-    # dataset_tester.test(dataset)
 
     features_to_tensor_extractor = FeaturesToTensorExtractor()
-    current_dataset = features_to_tensor_extractor.node_features(file_path=file_path, num_points=1024)
+    part_node_features = features_to_tensor_extractor.part_node_features(file_path=file_path, num_points=1024)
+    part_node_features_dataset = PartNodeFeaturesDataset(features_list=part_node_features)
 
-    for i in current_dataset:
-        features_shape = i["features"].shape
-        print(i["part_name"])
-        print(f"shape is {features_shape}")
-        print(i["features"])
+    # dataset_tester = DatasetTester()
+    # dataset_tester.test(data_type="part_node",
+    #                     dataset=part_node_features_dataset)
 
+    feature_embedding = FeatureEmbedding(input_dim=6, output_dim=256)
+    shape_mlp = PointsShapeMLP(embedding=feature_embedding,
+                               input_features=256,
+                               output_features=256,
+                               hidden_layers=[1024, 512])
 
+    dataloader = DataLoader(dataset=part_node_features_dataset,
+                            batch_size=2,
+                            shuffle=True)
+
+    optimizer = optim.Adam(shape_mlp.parameters(), lr=0.002)
+
+    trainer = Trainer(model=shape_mlp,
+                      dataloader=dataloader,
+                      optimizer=optimizer,
+                      loss_fn=nn.CrossEntropyLoss(),
+                      epochs=20,
+                      )
+
+    trainer.train()
