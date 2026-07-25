@@ -31,41 +31,57 @@ class FeaturesToTensorExtractor:
     def part_node_features(self, file_path, num_points):
         if os.path.isfile(file_path):
 
-            current_part_features = []
-
-            with open(file_path, mode="r", encoding="utf-8", errors="ignore") as f:
-                current_dict = json.load(f)
-
-            # Combine the coordinates and normal of each part, along dim=1, [x, y, z, n1, n2, n3]
-            for part_name, value in current_dict.items():
-                part_coords = value["node_coords"]
-                part_norms = value["node_norms"]
-                part_label = value["label"]
-
-                if len(part_coords) > 0:
-                    part_coords_tensor = torch.tensor(part_coords, dtype=torch.float32, device=self.device)
-                    part_norms_tensor = torch.tensor(part_norms, dtype=torch.float32, device=self.device)
-                    part_labels_tensor = torch.tensor(part_label, dtype=torch.long, device=self.device)
-
-                    part_node_features_tensor = torch.cat((part_coords_tensor, part_norms_tensor), dim=1)
-
-                    part_node_features_tensor = self.sampled_for_node_features(features_tensor=part_node_features_tensor,
-                                                                               num_points=num_points,)
-
-                    current_sample = {
-                        "part_name": part_name,
-                        "features": part_node_features_tensor,
-                        "label": part_labels_tensor
-                    }
-
-                    current_part_features.append(current_sample)
+            current_part_features = self.single_file_to_tensor(file_path=file_path, num_points=num_points)
 
             return current_part_features
+
+        elif os.path.isdir(file_path):
+            all_part_features = []
+
+            with os.scandir(file_path) as entries:
+                for entry in entries:
+                    if entry.is_file():
+                        current_part_features = self.single_file_to_tensor(file_path=entry.path, num_points=num_points)
+                        all_part_features.extend(current_part_features)
+
+            return all_part_features
 
         else:
             self.logger.warning(f"File {file_path} not found\n")
 
             return None
+
+    def single_file_to_tensor(self, file_path, num_points):
+        current_part_features = []
+
+        with open(file_path, mode="r", encoding="utf-8", errors="ignore") as f:
+            current_dict = json.load(f)
+
+        # Combine the coordinates and normal of each part, along dim=1, [x, y, z, n1, n2, n3]
+        for part_name, value in current_dict.items():
+            part_coords = value["node_coords"]
+            part_norms = value["node_norms"]
+            part_label = value["label"]
+
+            if len(part_coords) > 0:
+                part_coords_tensor = torch.tensor(part_coords, dtype=torch.float32, device=self.device)
+                part_norms_tensor = torch.tensor(part_norms, dtype=torch.float32, device=self.device)
+                part_labels_tensor = torch.tensor(part_label, dtype=torch.long, device=self.device)
+
+                part_node_features_tensor = torch.cat((part_coords_tensor, part_norms_tensor), dim=1)
+
+                part_node_features_tensor = self.sampled_for_node_features(features_tensor=part_node_features_tensor,
+                                                                           num_points=num_points, )
+
+                current_sample = {
+                    "part_name": part_name,
+                    "features": part_node_features_tensor,
+                    "label": part_labels_tensor
+                }
+
+                current_part_features.append(current_sample)
+
+        return current_part_features
 
     def sampled_for_node_features(self, features_tensor, num_points):
         """
@@ -293,6 +309,26 @@ class Trainer:
             self.logger.debug(f"Epoch: {epoch+1}, Loss: {average_loss}")
 
 
+class ModelSaver:
+    def __init__(self):
+        self.logger = logger
+
+    def save(self, model, file_path):
+        if os.path.isdir(file_path):
+            saved_path = os.path.join(file_path, "model.pth")
+
+            torch.save(model.state_dict(), saved_path)
+
+            self.logger.info(f"Model saved to {saved_path}")
+
+        else:
+            saved_path = os.path.join(os.path.dirname(file_path), "model.pth")
+
+            torch.save(model.state_dict(), saved_path)
+
+            self.logger.info(f"Model saved to {saved_path}")
+
+
 class DatasetTester:
     """
     to test dataset work successfully
@@ -331,69 +367,3 @@ class DatasetTester:
         else:
             pass
 
-
-if __name__ == '__main__':
-    # model = MLP(
-    #     input_features=1,
-    #     output_features=2,
-    #     hidden_layers=[16, 8],
-    #     dropout=0.0
-    # )
-    #
-    # # dataset = DummyMLPRegressionDataset()
-    # dataset = DummyMLPClassificationDataset()
-    #
-    # dataloader = DataLoader(
-    #     dataset,
-    #     batch_size=50,
-    #     shuffle=True
-    # )
-    #
-    # optimizer = optim.Adam(model.parameters(), lr=0.002)
-    #
-    # trainer = Trainer(model=model,
-    #                   dataloader=dataloader,
-    #                   optimizer=optimizer,
-    #                   loss_fn=nn.CrossEntropyLoss(),
-    #                   epochs=100)
-    #
-    # trainer.train()
-    #
-    # model.eval()
-    # with torch.no_grad():
-    #
-    #     test_x = torch.tensor([[10]], dtype=torch.float32, device="cuda")
-    #     outputs = model(test_x)
-    #
-    #     print(outputs)
-
-    file_path = r"E:\PythonProject\circlecircle2\Test_Items\test_model.json"
-
-    features_to_tensor_extractor = FeaturesToTensorExtractor()
-    part_node_features = features_to_tensor_extractor.part_node_features(file_path=file_path, num_points=1024)
-    part_node_features_dataset = PartNodeFeaturesDataset(features_list=part_node_features)
-
-    # dataset_tester = DatasetTester()
-    # dataset_tester.test(data_type="part_node",
-    #                     dataset=part_node_features_dataset)
-
-    feature_embedding = FeatureEmbedding(input_dim=6, output_dim=256)
-    shape_mlp = PointsShapeMLP(embedding=feature_embedding,
-                               input_features=256,
-                               output_features=256,
-                               hidden_layers=[1024, 512])
-
-    dataloader = DataLoader(dataset=part_node_features_dataset,
-                            batch_size=2,
-                            shuffle=True)
-
-    optimizer = optim.Adam(shape_mlp.parameters(), lr=0.002)
-
-    trainer = Trainer(model=shape_mlp,
-                      dataloader=dataloader,
-                      optimizer=optimizer,
-                      loss_fn=nn.CrossEntropyLoss(),
-                      epochs=20,
-                      )
-
-    trainer.train()

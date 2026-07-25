@@ -73,4 +73,4 @@ if __name__ == '__main__':
     file_path = r"E:\PythonProject\circlecircle2\Test_Items\test_model.k"
     folder_path = r"E:\PythonProject\circlecircle2\Test_Items"
 
-    fea_keywords_extractor.extract(file_path=file_path, solver1="lsdyna", version1="12.0")
+    fea_keywords_extractor.extract(file_path=folder_path, solver1="lsdyna", version1="12.0")
