@@ -1,15 +1,15 @@
-from circlecircle2.utilities.logger import logger
-from circlecircle2.core.fea.solver import Solver
-from circlecircle2.core.fea.pamcrash.parser.node_parser import NodeParser
-from circlecircle2.core.fea.pamcrash.translator.user_head_note_translator import UserHeadNoteTranslator
-from circlecircle2.core.fea.pamcrash.translator.node_translator import NodeTranslator
-from circlecircle2.core.fea.pamcrash.translator.shell_translator import ShellTranslator
-from circlecircle2.core.fea.pamcrash.translator.solid_translator import SolidTranslator
-from circlecircle2.core.fea.pamcrash.translator.part_translator import PartTranslator
-from circlecircle2.core.fea.pamcrash.translator.material_translator import MaterialTranslator
-from circlecircle2.core.fea.pamcrash.translator.material_mapping_translator import MaterialMappingTranslator
-from circlecircle2.core.fea.pamcrash.translator.funct_translator import FunctTranslator
-from circlecircle2.core.fea.pamcrash.translator.funct_mapping_translator import FunctMappingTranslator
+from utilities.logger import logger
+from core.fea.solver import Solver
+from core.fea.pamcrash.parser.node_parser import NodeParser
+from core.fea.pamcrash.translator.user_head_note_translator import UserHeadNoteTranslator
+from core.fea.pamcrash.translator.node_translator import NodeTranslator
+from core.fea.pamcrash.translator.shell_translator import ShellTranslator
+from core.fea.pamcrash.translator.solid_translator import SolidTranslator
+from core.fea.pamcrash.translator.part_translator import PartTranslator
+from core.fea.pamcrash.translator.material_translator import MaterialTranslator
+from core.fea.pamcrash.translator.material_mapping_translator import MaterialMappingTranslator
+from core.fea.pamcrash.translator.funct_translator import FunctTranslator
+from core.fea.pamcrash.translator.funct_mapping_translator import FunctMappingTranslator
 
 
 class PamCrash(Solver):

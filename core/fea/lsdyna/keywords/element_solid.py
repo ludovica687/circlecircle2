@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from circlecircle2.core.fea.lsdyna.keywords.element_shell import ElementShell
+from core.fea.lsdyna.keywords.element_shell import ElementShell
 
 
 class ElementSolid(ABC):

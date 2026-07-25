@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.define_table_2d import DefineTable2D
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.define_table_2d import DefineTable2D
 
 
 class DefineTable2DTitleParser(Parser):

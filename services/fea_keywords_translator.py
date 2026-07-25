@@ -1,9 +1,9 @@
 import os
-from circlecircle2.utilities.logger import logger
-from circlecircle2.core.fea.dataframe import dataframe
-from circlecircle2.core.fea.lsdyna.lsdyna import LsDyna
-from circlecircle2.core.fea.abaqus.abaqus import Abaqus
-from circlecircle2.core.fea.pamcrash.pamcrash import PamCrash
+from utilities.logger import logger
+from core.fea.dataframe import dataframe
+from core.fea.lsdyna.lsdyna import LsDyna
+from core.fea.abaqus.abaqus import Abaqus
+from core.fea.pamcrash.pamcrash import PamCrash
 
 
 class FeaKeywordsTranslator:

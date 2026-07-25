@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.mat_modified_piecewise_linear_plasticity import MatModifiedPiecewiseLinearPlasticity
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.mat_modified_piecewise_linear_plasticity import MatModifiedPiecewiseLinearPlasticity
 
 
 class MatModifiedPiecewiseLinearPlasticityTitleParser(Parser):

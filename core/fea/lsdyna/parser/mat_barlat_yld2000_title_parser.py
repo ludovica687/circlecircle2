@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.mat_barlat_yld2000 import MatBarlatYld2000
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.mat_barlat_yld2000 import MatBarlatYld2000
 
 
 class MatBarlatYld2000TitleParser(Parser):

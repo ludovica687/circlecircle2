@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.element_shell import ElementShell
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.element_shell import ElementShell
 
 
 class ElementShellParser(Parser):

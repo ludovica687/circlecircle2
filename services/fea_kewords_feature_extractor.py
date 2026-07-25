@@ -1,6 +1,6 @@
-from circlecircle2.utilities.logger import logger
-from circlecircle2.services.fea_keywords_translator import fea_keywords_translator
-from circlecircle2.core.tbox import tbox
+from utilities.logger import logger
+from services.fea_keywords_translator import fea_keywords_translator
+from core.tbox import tbox
 import os
 
 

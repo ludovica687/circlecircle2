@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.title import Title
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.title import Title
 
 
 class TitleParser(Parser):

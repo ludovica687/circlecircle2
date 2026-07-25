@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.end import End
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.end import End
 
 
 class EndParser(Parser):
@@ -12,7 +12,9 @@ class EndParser(Parser):
         }
 
     def _12p0(self, line_raw):
-        self.dataframe.end[0] = "reserved"
+        uid = len(self.dataframe.end) + 1
+
+        self.dataframe.end[uid] = End(uid=uid)
 
         self.reset()
 

@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.section_solid import SectionSolid
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.section_solid import SectionSolid
 
 
 class SectionSolidTitleParser(Parser):

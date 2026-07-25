@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.contact_tied_nodes_to_surface_offset_id import ContactTiedNodesToSurfaceOffsetID
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.contact_tied_nodes_to_surface_offset_id import ContactTiedNodesToSurfaceOffsetID
 
 
 class ContactTiedNodesToSurfaceOffsetIDParser(Parser):

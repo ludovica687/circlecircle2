@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.initial_velocity_generation import InitialVelocityGeneration
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.initial_velocity_generation import InitialVelocityGeneration
 
 
 class InitialVelocityGenerationTitleParser(Parser):

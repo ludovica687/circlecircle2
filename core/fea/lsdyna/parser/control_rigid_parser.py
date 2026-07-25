@@ -1,6 +1,5 @@
-
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.control_rigid import ControlRigid
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.control_rigid import ControlRigid
 
 
 class ControlRigidParser(Parser):

@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.constrained_extra_nodes_set import ConstrainedExtraNodesSet
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.constrained_extra_nodes_set import ConstrainedExtraNodesSet
 
 
 class ConstrainedExtraNodesSetTitleParser(Parser):

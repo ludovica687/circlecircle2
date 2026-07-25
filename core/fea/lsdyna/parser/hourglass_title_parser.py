@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.hourglass import Hourglass
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.hourglass import Hourglass
 
 
 class HourglassTitleParser(Parser):

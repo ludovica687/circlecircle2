@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.mat_rigid import MatRigid
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.mat_rigid import MatRigid
 
 
 class MatRigidParser(Parser):

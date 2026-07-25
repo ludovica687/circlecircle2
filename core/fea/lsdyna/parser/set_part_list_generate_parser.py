@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.set_part_list import SetPartList
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.set_part_list import SetPartList
 
 
 class SetPartListGenerateParser(Parser):

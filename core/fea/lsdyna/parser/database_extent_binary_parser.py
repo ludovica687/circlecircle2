@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.database_extent_binary import DatabaseExtentBinary
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.database_extent_binary import DatabaseExtentBinary
 
 
 class DatabaseExtentBinaryParser(Parser):

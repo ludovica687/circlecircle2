@@ -1,4 +1,4 @@
-from circlecircle2.core.fea.dataframe import dataframe
+from core.fea.dataframe import dataframe
 
 
 class MaterialMapper:

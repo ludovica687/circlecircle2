@@ -1,5 +1,5 @@
 import json
-from circlecircle2.utilities.logger import logger
+from utilities.logger import logger
 
 
 class MaterialGenerator:

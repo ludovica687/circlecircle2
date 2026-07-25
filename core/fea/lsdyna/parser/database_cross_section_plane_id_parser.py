@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.database_cross_section_plane_id import DatabaseCrossSectionPlaneID
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.database_cross_section_plane_id import DatabaseCrossSectionPlaneID
 
 
 class DatabaseCrossSectionPlaneIDParser(Parser):

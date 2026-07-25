@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.set_node_list import SetNodeList
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.set_node_list import SetNodeList
 
 
 class SetNodeListParser(Parser):

@@ -1,80 +1,80 @@
-from circlecircle2.utilities.logger import logger
-from circlecircle2.core.fea.solver import Solver
-from circlecircle2.core.fea.lsdyna.parser.keyword_parser import KeyWordParser
-from circlecircle2.core.fea.lsdyna.parser.parameter_parser import ParameterParser
-from circlecircle2.core.fea.lsdyna.parser.node_parser import NodeParser
-from circlecircle2.core.fea.lsdyna.parser.element_shell_parser import ElementShellParser
-from circlecircle2.core.fea.lsdyna.parser.element_solid_parser import ElementSolidParser
-from circlecircle2.core.fea.lsdyna.parser.part_parser import PartParser
-from circlecircle2.core.fea.lsdyna.parser.part_inertia_parser import PartInertiaParser
-from circlecircle2.core.fea.lsdyna.parser.section_shell_parser import SectionShellParser
-from circlecircle2.core.fea.lsdyna.parser.section_shell_title_parser import SectionShellTitleParser
-from circlecircle2.core.fea.lsdyna.parser.section_solid_parser import SectionSolidParser
-from circlecircle2.core.fea.lsdyna.parser.section_solid_title_parser import SectionSolidTitleParser
-from circlecircle2.core.fea.lsdyna.parser.hourglass_parser import HourglassParser
-from circlecircle2.core.fea.lsdyna.parser.hourglass_title_parser import HourglassTitleParser
-from circlecircle2.core.fea.lsdyna.parser.set_node_list_parser import SetNodeListParser
-from circlecircle2.core.fea.lsdyna.parser.set_node_list_title_parser import SetNodeListTitleParser
-from circlecircle2.core.fea.lsdyna.parser.set_shell_list_parser import SetShellListParser
-from circlecircle2.core.fea.lsdyna.parser.set_shell_list_title_parser import SetShellListTitleParser
-from circlecircle2.core.fea.lsdyna.parser.set_part_list_parser import SetPartListParser
-from circlecircle2.core.fea.lsdyna.parser.set_part_list_title_parser import SetPartListTitleParser
-from circlecircle2.core.fea.lsdyna.parser.set_part_list_generate_parser import SetPartListGenerateParser
-from circlecircle2.core.fea.lsdyna.parser.database_history_node_parser import DatabaseHistoryNodeParser
-from circlecircle2.core.fea.lsdyna.parser.database_history_node_title_parser import DatabaseHistoryNodeTitleParser
-from circlecircle2.core.fea.lsdyna.parser.mat_elastic_parser import MatElasticParser
-from circlecircle2.core.fea.lsdyna.parser.mat_elastic_title_parser import MatElasticTitleParser
-from circlecircle2.core.fea.lsdyna.parser.mat_rigid_parser import MatRigidParser
-from circlecircle2.core.fea.lsdyna.parser.mat_rigid_title_parser import MatRigidTitleParser
-from circlecircle2.core.fea.lsdyna.parser.mat_piecewise_linear_plasticity_log_interpolation_parser import MatPiecewiseLinearPlasticityLogInterpolationParser
-from circlecircle2.core.fea.lsdyna.parser.mat_piecewise_linear_plasticity_log_interpolation_title_parser import MatPiecewiseLinearPlasticityLogInterpolationTitleParser
-from circlecircle2.core.fea.lsdyna.parser.mat_modified_piecewise_linear_plasticity_parser import MatModifiedPiecewiseLinearPlasticityParser
-from circlecircle2.core.fea.lsdyna.parser.mat_modified_piecewise_linear_plasticity_title_parser import MatModifiedPiecewiseLinearPlasticityTitleParser
-from circlecircle2.core.fea.lsdyna.parser.mat_barlat_yld2000_parser import MatBarlatYld2000Parser
-from circlecircle2.core.fea.lsdyna.parser.mat_barlat_yld2000_title_parser import MatBarlatYld2000TitleParser
-from circlecircle2.core.fea.lsdyna.parser.define_curve_parser import DefineCurveParser
-from circlecircle2.core.fea.lsdyna.parser.define_curve_title_parser import DefineCurveTitleParser
-from circlecircle2.core.fea.lsdyna.parser.define_table_parser import DefineTableParser
-from circlecircle2.core.fea.lsdyna.parser.define_table_title_parser import DefineTableTitleParser
-from circlecircle2.core.fea.lsdyna.parser.define_table_2d_parser import DefineTable2DParser
-from circlecircle2.core.fea.lsdyna.parser.define_table_2d_title_parser import DefineTable2DTitleParser
-from circlecircle2.core.fea.lsdyna.parser.mat_add_erosion_parser import MatAddErosionParser
-from circlecircle2.core.fea.lsdyna.parser.mat_add_erosion_title_parser import MatAddErosionTitleParser
-from circlecircle2.core.fea.lsdyna.parser.constrained_extra_nodes_set_parser import ConstrainedExtraNodesSetParser
-from circlecircle2.core.fea.lsdyna.parser.constrained_extra_nodes_set_title_parser import ConstrainedExtraNodesSetTitleParser
-from circlecircle2.core.fea.lsdyna.parser.constrained_nodal_rigid_body_parser import ConstrainedNodalRigidBodyParser
-from circlecircle2.core.fea.lsdyna.parser.constrained_nodal_rigid_body_title_parser import ConstrainedNodalRigidBodyTitleParser
-from circlecircle2.core.fea.lsdyna.parser.database_cross_section_plane_id_parser import DatabaseCrossSectionPlaneIDParser
-from circlecircle2.core.fea.lsdyna.parser.contact_automatic_surface_to_surface_id_parser import ContactAutomaticSurfaceToSurfaceIDParser
-from circlecircle2.core.fea.lsdyna.parser.contact_automatic_surface_to_surface_id_title_parser import ContactAutomaticSurfaceToSurfaceIDTitleParser
-from circlecircle2.core.fea.lsdyna.parser.contact_automatic_single_surface_id_parser import ContactAutomaticSingleSurfaceIDParser
-from circlecircle2.core.fea.lsdyna.parser.contact_automatic_single_surface_id_title_parser import ContactAutomaticSingleSurfaceIDTitleParser
-from circlecircle2.core.fea.lsdyna.parser.initial_velocity_generation_parser import InitialVelocityGenerationParser
-from circlecircle2.core.fea.lsdyna.parser.initial_velocity_generation_title_parser import InitialVelocityGenerationTitleParser
-from circlecircle2.core.fea.lsdyna.parser.boundary_prescribed_motion_rigid_parser import BoundaryPrescribedMotionRigidParser
-from circlecircle2.core.fea.lsdyna.parser.title_parser import TitleParser
-from circlecircle2.core.fea.lsdyna.parser.database_deforc_parser import DatabaseDeforcParser
-from circlecircle2.core.fea.lsdyna.parser.database_jntforc_parser import DatabaseJntforcParser
-from circlecircle2.core.fea.lsdyna.parser.database_format_parser import DatabaseFormatParser
-from circlecircle2.core.fea.lsdyna.parser.control_shell_parser import ControlShellParser
-from circlecircle2.core.fea.lsdyna.parser.database_abstat_parser import DatabaseAbstatParser
-from circlecircle2.core.fea.lsdyna.parser.database_swforc_parser import DatabaseSwforcParser
-from circlecircle2.core.fea.lsdyna.parser.database_rwforc_parser import DatabaseRwforcParser
-from circlecircle2.core.fea.lsdyna.parser.database_sleout_parser import DatabaseSleoutParser
-from circlecircle2.core.fea.lsdyna.parser.database_elout_parser import DatabaseEloutParser
-from circlecircle2.core.fea.lsdyna.parser.database_matsum_parser import DatabaseMatsumParser
-from circlecircle2.core.fea.lsdyna.parser.database_nodout_parser import DatabaseNodoutParser
-from circlecircle2.core.fea.lsdyna.parser.database_binary_intfor_parser import DatabaseBinaryIntforParser
-from circlecircle2.core.fea.lsdyna.parser.control_dynamic_relaxation_parser import ControlDynamicRelaxationParser
-from circlecircle2.core.fea.lsdyna.parser.contact_tied_nodes_to_surface_offset_id_parser import ContactTiedNodesToSurfaceOffsetIDParser
-from circlecircle2.core.fea.lsdyna.parser.control_bulk_viscosity_parser import ControlBulkViscosityParser
-from circlecircle2.core.fea.lsdyna.parser.control_output_parser import ControlOutputParser
-from circlecircle2.core.fea.lsdyna.parser.control_parallel_parser import ControlParallelParser
-from circlecircle2.core.fea.lsdyna.parser.database_disbout_parser import DatabaseDisboutParser
-from circlecircle2.core.fea.lsdyna.parser.control_rigid_parser import ControlRigidParser
-from circlecircle2.core.fea.lsdyna.parser.control_solid_parser import ControlSolidParser
-from circlecircle2.core.fea.lsdyna.parser.database_extent_binary_parser import DatabaseExtentBinaryParser
-from circlecircle2.core.fea.lsdyna.parser.end_parser import EndParser
+from utilities.logger import logger
+from core.fea.solver import Solver
+from core.fea.lsdyna.parser.keyword_parser import KeyWordParser
+from core.fea.lsdyna.parser.parameter_parser import ParameterParser
+from core.fea.lsdyna.parser.node_parser import NodeParser
+from core.fea.lsdyna.parser.element_shell_parser import ElementShellParser
+from core.fea.lsdyna.parser.element_solid_parser import ElementSolidParser
+from core.fea.lsdyna.parser.part_parser import PartParser
+from core.fea.lsdyna.parser.part_inertia_parser import PartInertiaParser
+from core.fea.lsdyna.parser.section_shell_parser import SectionShellParser
+from core.fea.lsdyna.parser.section_shell_title_parser import SectionShellTitleParser
+from core.fea.lsdyna.parser.section_solid_parser import SectionSolidParser
+from core.fea.lsdyna.parser.section_solid_title_parser import SectionSolidTitleParser
+from core.fea.lsdyna.parser.hourglass_parser import HourglassParser
+from core.fea.lsdyna.parser.hourglass_title_parser import HourglassTitleParser
+from core.fea.lsdyna.parser.set_node_list_parser import SetNodeListParser
+from core.fea.lsdyna.parser.set_node_list_title_parser import SetNodeListTitleParser
+from core.fea.lsdyna.parser.set_shell_list_parser import SetShellListParser
+from core.fea.lsdyna.parser.set_shell_list_title_parser import SetShellListTitleParser
+from core.fea.lsdyna.parser.set_part_list_parser import SetPartListParser
+from core.fea.lsdyna.parser.set_part_list_title_parser import SetPartListTitleParser
+from core.fea.lsdyna.parser.set_part_list_generate_parser import SetPartListGenerateParser
+from core.fea.lsdyna.parser.database_history_node_parser import DatabaseHistoryNodeParser
+from core.fea.lsdyna.parser.database_history_node_title_parser import DatabaseHistoryNodeTitleParser
+from core.fea.lsdyna.parser.mat_elastic_parser import MatElasticParser
+from core.fea.lsdyna.parser.mat_elastic_title_parser import MatElasticTitleParser
+from core.fea.lsdyna.parser.mat_rigid_parser import MatRigidParser
+from core.fea.lsdyna.parser.mat_rigid_title_parser import MatRigidTitleParser
+from core.fea.lsdyna.parser.mat_piecewise_linear_plasticity_log_interpolation_parser import MatPiecewiseLinearPlasticityLogInterpolationParser
+from core.fea.lsdyna.parser.mat_piecewise_linear_plasticity_log_interpolation_title_parser import MatPiecewiseLinearPlasticityLogInterpolationTitleParser
+from core.fea.lsdyna.parser.mat_modified_piecewise_linear_plasticity_parser import MatModifiedPiecewiseLinearPlasticityParser
+from core.fea.lsdyna.parser.mat_modified_piecewise_linear_plasticity_title_parser import MatModifiedPiecewiseLinearPlasticityTitleParser
+from core.fea.lsdyna.parser.mat_barlat_yld2000_parser import MatBarlatYld2000Parser
+from core.fea.lsdyna.parser.mat_barlat_yld2000_title_parser import MatBarlatYld2000TitleParser
+from core.fea.lsdyna.parser.define_curve_parser import DefineCurveParser
+from core.fea.lsdyna.parser.define_curve_title_parser import DefineCurveTitleParser
+from core.fea.lsdyna.parser.define_table_parser import DefineTableParser
+from core.fea.lsdyna.parser.define_table_title_parser import DefineTableTitleParser
+from core.fea.lsdyna.parser.define_table_2d_parser import DefineTable2DParser
+from core.fea.lsdyna.parser.define_table_2d_title_parser import DefineTable2DTitleParser
+from core.fea.lsdyna.parser.mat_add_erosion_parser import MatAddErosionParser
+from core.fea.lsdyna.parser.mat_add_erosion_title_parser import MatAddErosionTitleParser
+from core.fea.lsdyna.parser.constrained_extra_nodes_set_parser import ConstrainedExtraNodesSetParser
+from core.fea.lsdyna.parser.constrained_extra_nodes_set_title_parser import ConstrainedExtraNodesSetTitleParser
+from core.fea.lsdyna.parser.constrained_nodal_rigid_body_parser import ConstrainedNodalRigidBodyParser
+from core.fea.lsdyna.parser.constrained_nodal_rigid_body_title_parser import ConstrainedNodalRigidBodyTitleParser
+from core.fea.lsdyna.parser.database_cross_section_plane_id_parser import DatabaseCrossSectionPlaneIDParser
+from core.fea.lsdyna.parser.contact_automatic_surface_to_surface_id_parser import ContactAutomaticSurfaceToSurfaceIDParser
+from core.fea.lsdyna.parser.contact_automatic_surface_to_surface_id_title_parser import ContactAutomaticSurfaceToSurfaceIDTitleParser
+from core.fea.lsdyna.parser.contact_automatic_single_surface_id_parser import ContactAutomaticSingleSurfaceIDParser
+from core.fea.lsdyna.parser.contact_automatic_single_surface_id_title_parser import ContactAutomaticSingleSurfaceIDTitleParser
+from core.fea.lsdyna.parser.initial_velocity_generation_parser import InitialVelocityGenerationParser
+from core.fea.lsdyna.parser.initial_velocity_generation_title_parser import InitialVelocityGenerationTitleParser
+from core.fea.lsdyna.parser.boundary_prescribed_motion_rigid_parser import BoundaryPrescribedMotionRigidParser
+from core.fea.lsdyna.parser.title_parser import TitleParser
+from core.fea.lsdyna.parser.database_deforc_parser import DatabaseDeforcParser
+from core.fea.lsdyna.parser.database_jntforc_parser import DatabaseJntforcParser
+from core.fea.lsdyna.parser.database_format_parser import DatabaseFormatParser
+from core.fea.lsdyna.parser.control_shell_parser import ControlShellParser
+from core.fea.lsdyna.parser.database_abstat_parser import DatabaseAbstatParser
+from core.fea.lsdyna.parser.database_swforc_parser import DatabaseSwforcParser
+from core.fea.lsdyna.parser.database_rwforc_parser import DatabaseRwforcParser
+from core.fea.lsdyna.parser.database_sleout_parser import DatabaseSleoutParser
+from core.fea.lsdyna.parser.database_elout_parser import DatabaseEloutParser
+from core.fea.lsdyna.parser.database_matsum_parser import DatabaseMatsumParser
+from core.fea.lsdyna.parser.database_nodout_parser import DatabaseNodoutParser
+from core.fea.lsdyna.parser.database_binary_intfor_parser import DatabaseBinaryIntforParser
+from core.fea.lsdyna.parser.control_dynamic_relaxation_parser import ControlDynamicRelaxationParser
+from core.fea.lsdyna.parser.contact_tied_nodes_to_surface_offset_id_parser import ContactTiedNodesToSurfaceOffsetIDParser
+from core.fea.lsdyna.parser.control_bulk_viscosity_parser import ControlBulkViscosityParser
+from core.fea.lsdyna.parser.control_output_parser import ControlOutputParser
+from core.fea.lsdyna.parser.control_parallel_parser import ControlParallelParser
+from core.fea.lsdyna.parser.database_disbout_parser import DatabaseDisboutParser
+from core.fea.lsdyna.parser.control_rigid_parser import ControlRigidParser
+from core.fea.lsdyna.parser.control_solid_parser import ControlSolidParser
+from core.fea.lsdyna.parser.database_extent_binary_parser import DatabaseExtentBinaryParser
+from core.fea.lsdyna.parser.end_parser import EndParser
 
 
 class LsDyna(Solver):
@@ -243,47 +243,6 @@ class LsDyna(Solver):
         self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_initial)
         self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_1)
         self.parse_data(file_path=file_path, version=version, parse_keywords=self.parse_keywords_2)
-
-        # if file_path:
-        #     with open(file=file_path, mode="r", encoding="utf-8", errors="ignore") as f:
-        #         try:
-        #             for line in f:
-        #
-        #                 if not line or line.startswith("$"):
-        #                     continue
-        #
-        #                 if line.startswith("*"):
-        #                     dyna_keyword = line.split()[0].strip().upper()
-        #
-        #                     if dyna_keyword in self.parse_keywords:
-        #                         self.current_parser = self.parse_keywords[dyna_keyword]
-        #                         self.current_parser.reset()
-        #                         continue
-        #                     else:
-        #                         if dyna_keyword in self.parse_keywords_initial:
-        #                             continue
-        #                         else:
-        #                             self.not_support_keywords.add(dyna_keyword)
-        #                             self.current_parser = None
-        #                             continue
-        #
-        #                 elif line.strip().strip("-") == "BEGIN PGP MESSAGE":
-        #                     dyna_keyword = "BEGIN PGP MESSAGE"
-        #
-        #                     if dyna_keyword in self.parse_keywords:
-        #                         self.current_parser = self.parse_keywords[dyna_keyword]
-        #                         continue
-        #
-        #                 elif line.strip().strip("-") == "END PGP MESSAGE":
-        #                     self.current_parser = None
-        #                     continue
-        #
-        #                 else:
-        #                     if self.current_parser is not None:
-        #                         self.current_parser.parse(line_raw=line, version=version)
-        #
-        #         except Exception as e:
-        #             raise e
 
         for not_support_keyword in self.not_support_keywords:
             self.logger.warning(f"Ls-Dyna not support keywords: {not_support_keyword}")

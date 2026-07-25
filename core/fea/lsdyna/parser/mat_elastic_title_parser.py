@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.mat_elastic import MatElastic
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.mat_elastic import MatElastic
 
 
 class MatElasticTitleParser(Parser):

@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.constrained_nodal_rigid_body import ConstrainedNodalRigidBody
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.constrained_nodal_rigid_body import ConstrainedNodalRigidBody
 
 
 class ConstrainedNodalRigidBodyParser(Parser):

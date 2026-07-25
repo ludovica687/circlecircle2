@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.pamcrash.keywords.node import Node
+from core.fea.parser import Parser
+from core.fea.pamcrash.keywords.node import Node
 
 
 class NodeParser(Parser):

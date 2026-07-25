@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.mat_piecewise_linear_plasticity_log_interpolation import MatPiecewiseLinearPlasticityLogInterpolation
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.mat_piecewise_linear_plasticity_log_interpolation import MatPiecewiseLinearPlasticityLogInterpolation
 
 
 class MatPiecewiseLinearPlasticityLogInterpolationTitleParser(Parser):

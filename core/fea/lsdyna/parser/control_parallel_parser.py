@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.control_parallel import ControlParallel
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.control_parallel import ControlParallel
 
 
 class ControlParallelParser(Parser):

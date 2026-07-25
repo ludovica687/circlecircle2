@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.control_dynamic_relaxation import ControlDynamicRelaxation
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.control_dynamic_relaxation import ControlDynamicRelaxation
 
 
 class ControlDynamicRelaxationParser(Parser):

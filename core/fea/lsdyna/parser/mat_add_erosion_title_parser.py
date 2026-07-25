@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.mat_add_erosion import MatAddErosion
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.mat_add_erosion import MatAddErosion
 
 
 class MatAddErosionTitleParser(Parser):

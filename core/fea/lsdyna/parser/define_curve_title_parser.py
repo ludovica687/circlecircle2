@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.define_curve import DefineCurve
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.define_curve import DefineCurve
 
 
 class DefineCurveTitleParser(Parser):

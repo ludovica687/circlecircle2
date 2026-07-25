@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.keyword import KeyWord
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.keyword import KeyWord
 
 
 class KeyWordParser(Parser):
@@ -12,7 +12,9 @@ class KeyWordParser(Parser):
         }
 
     def _12p0(self, line_raw):
-        self.dataframe.keyword[0] = "reserved"
+        uid = len(self.dataframe.keyword) + 1
+
+        self.dataframe.keyword[uid] = KeyWord(uid=uid)
 
         self.reset()
 

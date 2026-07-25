@@ -6,7 +6,7 @@ from torch.utils.data import TensorDataset, DataLoader
 from torch.utils.data import Dataset
 import json
 import os
-from circlecircle2.utilities.logger import logger
+from utilities.logger import logger
 
 
 class FeaturesToTensorExtractor:

@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.database_abstat import DatabaseAbstat
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.database_abstat import DatabaseAbstat
 
 
 class DatabaseAbstatParser(Parser):

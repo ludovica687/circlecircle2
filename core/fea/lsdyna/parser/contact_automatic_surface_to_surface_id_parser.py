@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.contact_automatic_surface_to_surface_id import ContactAutomaticSurfaceToSurfaceID
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.contact_automatic_surface_to_surface_id import ContactAutomaticSurfaceToSurfaceID
 
 
 class ContactAutomaticSurfaceToSurfaceIDParser(Parser):

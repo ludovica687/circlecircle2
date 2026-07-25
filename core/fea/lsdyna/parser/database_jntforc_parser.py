@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.database_jntforc import DatabaseJntforc
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.database_jntforc import DatabaseJntforc
 
 
 class DatabaseJntforcParser(Parser):

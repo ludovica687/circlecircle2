@@ -1,15 +1,15 @@
-from circlecircle2.utilities.logger import logger
-from circlecircle2.core.fea.solver import Solver
-from circlecircle2.core.fea.abaqus.parser.node_parser import NodeParser
-from circlecircle2.core.fea.abaqus.translator.user_head_note_translator import UserHeadNoteTranslator
-from circlecircle2.core.fea.abaqus.translator.node_translator import NodeTranslator
-from circlecircle2.core.fea.abaqus.translator.element_translator import ElementTranslator
-from circlecircle2.core.fea.abaqus.translator.material_translator import MaterialTranslator
-from circlecircle2.core.fea.abaqus.translator.material_mapping_translator import MaterialMappingTranslator
-from circlecircle2.core.fea.abaqus.translator.shell_section_translator import ShellSectionTranslator
-from circlecircle2.core.fea.abaqus.translator.solid_section_translator import SolidSectionTranslator
-from circlecircle2.core.fea.abaqus.translator.kinematic_coupling_translator import KinematicCouplingTranslator
-from circlecircle2.core.fea.abaqus.translator.boundary_translator import BoundaryTranslator
+from utilities.logger import logger
+from core.fea.solver import Solver
+from core.fea.abaqus.parser.node_parser import NodeParser
+from core.fea.abaqus.translator.user_head_note_translator import UserHeadNoteTranslator
+from core.fea.abaqus.translator.node_translator import NodeTranslator
+from core.fea.abaqus.translator.element_translator import ElementTranslator
+from core.fea.abaqus.translator.material_translator import MaterialTranslator
+from core.fea.abaqus.translator.material_mapping_translator import MaterialMappingTranslator
+from core.fea.abaqus.translator.shell_section_translator import ShellSectionTranslator
+from core.fea.abaqus.translator.solid_section_translator import SolidSectionTranslator
+from core.fea.abaqus.translator.kinematic_coupling_translator import KinematicCouplingTranslator
+from core.fea.abaqus.translator.boundary_translator import BoundaryTranslator
 
 
 class Abaqus(Solver):

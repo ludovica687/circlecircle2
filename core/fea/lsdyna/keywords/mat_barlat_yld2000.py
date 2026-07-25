@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from circlecircle2.core.fea.lsdyna.material_mapper import material_mapper
+from core.fea.lsdyna.material_mapper import material_mapper
 
 
 class MatBarlatYld2000(ABC):

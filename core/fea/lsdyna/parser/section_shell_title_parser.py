@@ -1,5 +1,5 @@
-from circlecircle2.core.fea.parser import Parser
-from circlecircle2.core.fea.lsdyna.keywords.section_shell import SectionShell
+from core.fea.parser import Parser
+from core.fea.lsdyna.keywords.section_shell import SectionShell
 
 
 class SectionShellTitleParser(Parser):

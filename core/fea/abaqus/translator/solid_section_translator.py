@@ -1,4 +1,4 @@
-from circlecircle2.core.fea.translator import Translator
+from core.fea.translator import Translator
 
 
 class SolidSectionTranslator(Translator):
