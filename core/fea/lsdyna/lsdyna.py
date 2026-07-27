@@ -74,6 +74,11 @@ from core.fea.lsdyna.parser.database_disbout_parser import DatabaseDisboutParser
 from core.fea.lsdyna.parser.control_rigid_parser import ControlRigidParser
 from core.fea.lsdyna.parser.control_solid_parser import ControlSolidParser
 from core.fea.lsdyna.parser.database_extent_binary_parser import DatabaseExtentBinaryParser
+from core.fea.lsdyna.parser.database_rcforc_parser import DatabaseRcforcParser
+from core.fea.lsdyna.parser.control_solution_parser import ControlSolutionParser
+from core.fea.lsdyna.parser.control_timestep_parser import ControlTimestepParser
+from core.fea.lsdyna.parser.database_sbtout_parser import DatabaseSbtoutParser
+from core.fea.lsdyna.parser.control_contact_parser import ControlContactParser
 from core.fea.lsdyna.parser.end_parser import EndParser
 
 
@@ -134,6 +139,11 @@ class LsDyna(Solver):
             "*CONTROL_RIGID": ControlRigidParser(),
             "*CONTROL_SOLID": ControlSolidParser(),
             "*DATABASE_EXTENT_BINARY": DatabaseExtentBinaryParser(),
+            "*DATABASE_RCFORC": DatabaseRcforcParser(),
+            "*CONTROL_SOLUTION": ControlSolutionParser(),
+            "*CONTROL_TIMESTEP": ControlTimestepParser(),
+            "*DATABASE_SBTOUT": DatabaseSbtoutParser(),
+            "*CONTROL_CONTACT": ControlContactParser(),
             "*END": EndParser(),
         }
 
